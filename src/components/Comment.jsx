@@ -46,10 +46,12 @@ const Comment = ({ comment }) => {
     locale: enUS,
   });
 
+  console.log(comment);
+
   return (
     <div
-      className={`border border-r-0 relative ${
-        comment.parentId === null && "border-r"
+      className={`border-y border-l relative ${
+        !comment.parentId && "border-r"
       } rounded-r-none border-gray-50/20 shadow-lg rounded-lg mb-6`}
     >
       <div className="flex">
