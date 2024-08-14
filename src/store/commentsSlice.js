@@ -45,7 +45,19 @@ const initialState = JSON.parse(localStorage.getItem("comments")) || [
       },
     ],
   },
+  {
+    id: "a1b2c3d4-e5f6-7g8h-9i10-jk11lm12aa3o",
+    userName: "Bob",
+    text: "This is another main comment on the post.",
+    createdAt: "2024-08-15T12:34:56.789Z",
+    parentId: null,
+    subComments: [],
+  },
 ];
+
+initialState.sort((a, b) => {
+  return new Date(b.createdAt) - new Date(a.createdAt);
+});
 
 const commentsSlice = createSlice({
   name: "comments",
