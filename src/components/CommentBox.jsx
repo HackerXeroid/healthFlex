@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Input, Textarea, Button } from "@nextui-org/react";
 import { addComment, editComment } from "../store/commentsSlice";
 
 const CommentBox = ({ useCase, parent, onClose }) => {
@@ -9,70 +10,47 @@ const CommentBox = ({ useCase, parent, onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name.trim() || !text.trim()) return;
+    if (!text.trim()) return;
+    if (useCase !== "edit" && !name.trim()) return;
 
     if (useCase === "edit") {
-      dispatch(editComment({ id: parent.id, text }));
+      console.log("Worked");
+      dispatch(editComment({ id: parent?.id ?? null, text }));
     } else {
-      dispatch(addComment({ userName: name, text, parentId: parent?.id }));
+      dispatch(
+        addComment({ userName: name, text, parentId: parent?.id ?? null })
+      );
     }
-    setName("");
-    setText("");
-    if (onClose) onClose();
+    onClose();
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white shadow-md rounded-lg p-6 mb-6"
+      className="border border-gray-50/20 rounded-xl flex-col flex gap-3 p-4"
     >
-      <div className="mb-4">
-        <label
-          htmlFor="name"
-          className="block text-gray-700 text-sm font-bold mb-2"
-        >
-          Name
-        </label>
-        <input
-          type="text"
-          id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          disabled={useCase === "edit"}
-          required
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-      <div className="mb-6">
-        <label
-          htmlFor="comment"
-          className="block text-gray-700 text-sm font-bold mb-2"
-        >
-          Comment
-        </label>
-        <textarea
-          id="comment"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          required
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-24"
-        ></textarea>
-      </div>
-      <div className="flex items-center justify-between">
-        <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          Post
-        </button>
-        {onClose && (
-          <button
-            onClick={onClose}
-            type="button"
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Cancel
-          </button>
+      <p className="font-bold text-lg capitalize">{useCase}</p>
+      <Input
+        isDisabled={useCase === "edit"}
+        label="Name"
+        value={useCase === "edit" ? parent.userName : name}
+        onChange={(e) => setName(e.target.value)}
+        required={useCase !== "edit"}
+        autoFocus={useCase === "reply"}
+      />
+      <Textarea
+        label="Comment"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        autoFocus={useCase === "edit"}
+        required
+      />
+      <div className="flex justify-between">
+        <Button type="submit">Post</Button>
+        {useCase !== "comment" && (
+          <Button type="button" onClick={onClose}>
+            Close
+          </Button>
         )}
       </div>
     </form>
